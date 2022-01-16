@@ -53,17 +53,20 @@ export class Order{
     }
 }
 
-export const findProductByBarcode = (barcode: string,cb:any) => {
+export const findProductByBarcode = async (barcode: string|undefined,cb:any) => {
     console.log("findProductByBarcode:"+barcode);
     let result: Product|undefined = undefined;
-    axios.get('http://192.168.1.25:8000/product', {params: {barcode: barcode}})
+    await axios.get('http://192.168.1.25:8000/product', {params: {barcode: barcode}})
         .then(res => {
             result = new Product(res.data[0]['product_id'],res.data[0]['category_id'],res.data[0]['product_name'],res.data[0]['product_summary'],res.data[0]['product_principal_price'],res.data[0]['product_price'],res.data[0]['product_quantity'])
             console.log("findProductByBarcode()");
             console.log(res.data);
             cb(null,result)
         }).catch(err => {
-        console.log(err);
+            if(err.response.status===404){
+                result = undefined;
+                cb(err,result);
+            }
     });
 }
 

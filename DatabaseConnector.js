@@ -40,7 +40,7 @@ class DatabaseConnector {
             if (err) throw err; // not connected!
 
             // Use the connection
-            connection.query('SELECT * FROM products WHERE product_id= '+barcode, function (error, results, fields) {
+            connection.query("SELECT * FROM products WHERE product_id= '"+barcode+"'", function (error, results, fields) {
                 result = JSON.parse(JSON.stringify(results))
                 console.log(result);
                 // When done with the connection, release it.

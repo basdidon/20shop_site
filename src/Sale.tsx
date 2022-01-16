@@ -1,16 +1,18 @@
-import React, {useState, useEffect, FormEventHandler} from "react";
+import React, {useState} from "react";
 import {findProductByBarcode,Order,Product} from "./Helper";
-
-type Inputs = {
-    barcode: string;
-}
 
 const Sale =()=>{
     const [tableData,setTableData] = useState<Order[]>([]);
-    const [inputBarcode,setInputBarcode] = useState('');
+    const [inputBarcode,setInputBarcode] = useState<string>('');
+    const [consoleText,setConsoleText] = useState<string>('')
     const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {setInputBarcode(event.target.value)}
 
     const ProductRow =(props:any)=>{
+        const removeOrder = (i:string) => {
+            const arrayCopy = tableData.filter((tableData: { barcode: string; }) => tableData.barcode !== i);
+            setTableData(arrayCopy);
+        }
+
         console.log("ProductRow"+props.i)
         return (
             <tr>
@@ -19,6 +21,7 @@ const Sale =()=>{
                 <td className={'table_view'}>{tableData[props.i].price}</td>
                 <td className={'table_view'}>{tableData[props.i].quantity}</td>
                 <td className={'table_view'}>{tableData[props.i].price*tableData[props.i].quantity}</td>
+                <td><button id={'sale-remove-btn'}onClick={() => removeOrder(tableData[props.i].barcode)}>-</button></td>
             </tr>
         )
     }
@@ -43,12 +46,22 @@ const Sale =()=>{
             <h1>{totalPrice}</h1>
         )
     }
+
+    const renderConsoleText = () => {
+        if (consoleText===''){
+            return;
+        }else {
+            return <div id={"sale-console"}>
+                <p>{consoleText}</p>
+            </div>
+        }
+    }
     
     const onSubmit = (event:React.FormEvent<HTMLFormElement>) => {
-        let new_order;
         event.preventDefault();
+        setConsoleText('');
         console.log("enter : "+inputBarcode);
-        findProductByBarcode(inputBarcode,function(error:any,result:Product){
+        findProductByBarcode(inputBarcode,function(error:Error,result:Product){
             console.log("Callback()");
             if (error){
                 console.log("findProductByBarcode[error]");
@@ -82,96 +95,40 @@ const Sale =()=>{
                     console.log("not found");
                 }
             }
+        }).catch(err => {
+            console.log("not found.")
+            setInputBarcode('');
+            setConsoleText("item not found !!!")
         })
     }
-
-    // const onSubmit: SubmitHandler<Inputs> = data =>{
-    //     console.log('onSubmit()');
-    //     const res :any= [];
-    //     console.log("orders : "+orders.length);
-    //     if(orders.length===0){
-    //         findProductByBarcode('9786167890906',function (error:any,result:any){
-    //             if (error){}
-    //             else {
-    //                 orders.push(new Order(data.barcode,res['product_name'],res['product_price'],0));
-    //                 console.log(orders);
-    //                 orders.forEach(element=>console.log(":barcode: "+element.i_barcode));
-    //                 console.log("after : "+orders.length);
-    //             }
-    //         });
-    //     }else {
-    //         orders.forEach((element)=>{
-    //             console.log("aa");
-    //             if(data.barcode!==element.i_barcode){
-    //                 console.log("sasa");
-    //                 findProductByBarcode('9786167890906',function (error:any,result:any){
-    //                     if (error){}
-    //                     else {
-    //                         let new_order = new Order(data.barcode,res['product_name'],1,0);
-    //                         orders.push(new_order);
-    //                         orders.forEach(element=>console.log(":barcode: "+element.i_barcode));
-    //                     }
-    //                 });
-    //             }else {
-    //                 element.i_quantity++;
-    //                 orders.forEach(element=>console.log(element.i_barcode+"(qyt): "+element.i_quantity));
-    //             }
-    //         });
-    //         setTableData(orders);
-    //         renderProductRows();
-    //     }
-
-
-        // let new_order = new Order(data.barcode,"_name_",1,0)
-        // orders.push(new_order);
-        // console.log(orders.length);
-        // orders.forEach(element=>console.log(element));
-    //}
-
-    // return <div className={"list-container"}>
-    //     <form onSubmit={handleSubmit(onSubmit)}>
-    //         <table>
-    //             <thead>
-    //                 <tr>
-    //                     <th className={'table_view'}>รหัสสินค้า</th>
-    //                     <th className={'table_view'}>ชื่อสินค้า</th>
-    //                     <th className={'table_view'}>ราคาต่อหน่วย</th>
-    //                     <th className={'table_view'}>จำนวน</th>
-    //                     <th className={'table_view'}>ราคารวม</th>
-    //                 </tr>
-    //             </thead>
-    //             <tbody>
-    //                 {renderProductRows()}
-    //             </tbody>
-    //         </table>
-    //         <input {...register("barcode")} />
-    //         <input type="submit" />
-    //     </form>
-    // </div>
 
     return <div className={"list-container"} id={"sale-view"}>
         <table id={"sale-table"}>
             <thead>
-                <th className={'table_view'} id={"sale-th-01"}>รหัสสินค้า</th>
-                <th className={'table_view'} id={"sale-th-02"}>ชื่อสินค้า</th>
-                <th className={'table_view'} id={"sale-th-03"}>ราคา / หน่วย</th>
-                <th className={'table_view'} id={"sale-th-04"}>จำนวน</th>
-                <th className={'table_view'} id={"sale-th-05"}>ราคารวม / รายการ</th>
+                <tr>
+                    <th className={'table_view'} id={"sale-th-01"}>รหัสสินค้า</th>
+                    <th className={'table_view'} id={"sale-th-02"}>ชื่อสินค้า</th>
+                    <th className={'table_view'} id={"sale-th-03"}>ราคา / หน่วย</th>
+                    <th className={'table_view'} id={"sale-th-04"}>จำนวน</th>
+                    <th className={'table_view'} id={"sale-th-05"}>ราคารวม / รายการ</th>
+                </tr>
             </thead>
             <tbody>
                 {renderProductRows()}
             </tbody>
         </table>
-        <form onSubmit={onSubmit} id={"sale-form"}>
-            <div id={"sale-sidebar"}>
+        <div id={"sale-sidebar"}>
+            <div id={"sale-input"}>
                 <h3>ราคารวม</h3>
                 {renderTotalPrice()}
-                <div id={"sale-input"}>
+                <form onSubmit={onSubmit} id={"sale-form"}>
                     <input value={inputBarcode} onChange={onChange}/>
                     <input type="submit"/>
-                </div>
+                </form>
             </div>
-        </form>
+            {renderConsoleText()}
+        </div>
+
     </div>
 }
 

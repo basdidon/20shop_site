@@ -1,9 +1,8 @@
-import React, {useEffect, useState} from "react";
-import {BrowserRouter as Router, Switch, Route, Link, useRouteMatch, useParams} from "react-router-dom";
+import React, {useState} from "react";
 import {findProductByBarcode, Product} from "./Helper";
 
 const ProductAbout = () => {
-    const [inputBarcode,setInputBarcode] = useState('');
+    const [inputBarcode,setInputBarcode] = useState<string>('');
     const [product,setProduct] = useState<Product|undefined>();
     const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {setInputBarcode(event.target.value)}
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -17,7 +16,7 @@ const ProductAbout = () => {
                 setProduct(result)
                 setInputBarcode('');
             }
-        })
+        }).then()
 
     }
 

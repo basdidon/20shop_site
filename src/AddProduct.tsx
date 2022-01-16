@@ -19,7 +19,7 @@ const AddProduct=()=>{
         bodyFormData.append('product_id',data.productId);
         bodyFormData.append('product_name',data.productName);
         console.log(bodyFormData);
-        const response = axios({
+        axios({
             method: "post",
             url: 'http://localhost:8000/add_product',
             data: bodyFormData,
@@ -40,30 +40,34 @@ const AddProduct=()=>{
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <table>
-                <tbody>
+                <thead>
                     <tr>
                         <th><label>รหัสสินค้า :</label></th>
+                        <th><label>ชื่อสินค้า :</label></th>
+                        <th><label>คำอธิบาย :</label></th>
+                        <th><label>ราคาซื้อ :</label></th>
+                        <th><label>ราคาขาย :</label></th>
+                        <th><label>จำนวนคงเหลือ :</label></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
                         <td><input {...register("productId",{required:true})}/></td>
                         {errors.productId?.type === 'required' && "Product ID is required"}
                     </tr>
                     <tr>
-                        <th><label>ชื่อสินค้า :</label></th>
                         <td><input {...register("productName")}/></td>
                     </tr>
                     <tr>
-                        <th><label>คำอธิบาย :</label></th>
                         <td><textarea {...register("productSummary")}/></td>
                     </tr>
                     <tr>
-                        <th><label>ราคาซื้อ :</label></th>
                         <td><input {...register("productPrinciplePrice")}/></td>
                     </tr>
                     <tr>
-                        <th><label>ราคาขาย :</label></th>
                         <td><input {...register("productPrice")}/></td>
                     </tr>
                     <tr>
-                        <th><label>จำนวนคงเหลือ :</label></th>
                         <td><input {...register("productQuantity")}/></td>
                     </tr>
                     <tr>

@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {BrowserRouter as Router, Switch, Route, Link, useRouteMatch, useParams, Redirect} from "react-router-dom";
+import React from 'react';
+import {BrowserRouter as Router, Switch, Route, Link, useRouteMatch, useParams} from "react-router-dom";
 import './App.css';
 import ProductTable from "./ProductTable";
 import AddProduct from "./AddProduct";
@@ -7,8 +7,6 @@ import FormExample from "./FormExample";
 import Store from "./Store";
 import Sale from "./Sale";
 import ProductAbout from "./ProductAbout";
-import {findProductByBarcode, Product} from "./Helper";
-import box_image from "./image/box.png";
 
 const App = (props:any) =>{
 
